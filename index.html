@@ -1,136 +1,126 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
-  <title>ZOR Cipher Website</title>
+<meta charset="UTF-8">
+<title>ZOR Cipher Website</title>
 
-  <style>
-    body {
-      font-family: Arial;
-      padding: 20px;
-      transition: 0.3s;
-      background: white;
-      color: black;
-    }
+<style>
+body {
+  font-family: Arial;
+  padding: 20px;
+  transition: 0.3s;
+  background: white;
+  color: black;
+}
 
-    h2 {
-      text-align: center;
-      margin-bottom: 10px;
-    }
+h2 {
+  text-align: center;
+}
 
-    .reset-container {
-      display: flex;
-      justify-content: center;
-      margin: 10px 0 20px 0;
-    }
+/* LAYOUT */
+.reset-container {
+  display: flex;
+  justify-content: center;
+  margin: 10px 0 20px 0;
+}
 
-    .container {
-      display: flex;
-      gap: 20px;
-    }
+.container {
+  display: flex;
+  gap: 20px;
+}
 
-    .box {
-      width: 50%;
-    }
+.box {
+  width: 50%;
+}
 
-    textarea {
-      width: 100%;
-      height: 120px;
-      font-size: 14px;
-    }
+textarea {
+  width: 100%;
+  height: 120px;
+  font-size: 14px;
+}
 
-    .output {
-      margin-top: 10px;
-      white-space: pre-wrap;
-      background: #f4f4f4;
-      padding: 10px;
-      min-height: 60px;
-      font-size: 14px;
-    }
+.output {
+  margin-top: 10px;
+  white-space: pre-wrap;
+  background: #f4f4f4;
+  padding: 10px;
+  min-height: 60px;
+}
 
-    button {
-      cursor: pointer;
-      padding: 6px 10px;
-      border: 1px solid #ccc;
-      background: white;
-      transition: 0.3s;
-    }
+button {
+  cursor: pointer;
+  padding: 6px 10px;
+  border: 1px solid #ccc;
+  background: white;
+}
 
-    .rules {
-      margin-top: 25px;
-      padding: 15px;
-      background: #f9f9f9;
-      border: 1px solid #ddd;
-    }
+/* RULES */
+.rules {
+  margin-top: 25px;
+  padding: 15px;
+  background: #f9f9f9;
+  border: 1px solid #ddd;
+}
 
-    .table {
-      font-family: monospace;
-      white-space: pre;
-      background: #fff;
-      padding: 10px;
-      border: 1px solid #ccc;
-      overflow-x: auto;
-    }
+.table {
+  font-family: monospace;
+  white-space: pre;
+  background: #fff;
+  padding: 10px;
+  border: 1px solid #ccc;
+}
 
-    /* DARK MODE */
-    .dark {
-      background: #121212;
-      color: #eee;
-    }
+/* DARK MODE */
+.dark {
+  background: #121212;
+  color: #eee;
+}
 
-    .dark .output {
-      background: #1e1e1e;
-    }
+.dark .output {
+  background: #1e1e1e;
+}
 
-    .dark .rules {
-      background: #1a1a1a;
-      border-color: #333;
-    }
+.dark .rules {
+  background: #1a1a1a;
+  border-color: #333;
+}
 
-    .dark .table {
-      background: #1a1a1a;
-      border-color: #333;
-      color: #eee;
-    }
+.dark .table {
+  background: #1a1a1a;
+  border-color: #333;
+  color: #eee;
+}
 
-    .dark textarea {
-      background: #1e1e1e;
-      color: #eee;
-      border: 1px solid #444;
-    }
+.dark textarea {
+  background: #1e1e1e;
+  color: #eee;
+}
 
-    .dark button {
-      background: #1e1e1e;
-      color: #eee;
-      border: 1px solid #444;
-    }
+.dark button {
+  background: #1e1e1e;
+  color: #eee;
+  border: 1px solid #444;
+}
 
-    /* 🌗 THEME BUTTON = ALWAYS OPPOSITE OF PAGE */
-    .theme-btn {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      padding: 10px 14px;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: 0.3s;
-      border: 1px solid #ccc;
-    }
+/* THEME BUTTON */
+.theme-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  padding: 10px 14px;
+  border-radius: 6px;
+}
 
-    /* Light page → dark button */
-    body:not(.dark) .theme-btn {
-      background: #111;
-      color: white;
-      border: none;
-    }
+body:not(.dark) .theme-btn {
+  background: black;
+  color: white;
+}
 
-    /* Dark page → light button */
-    .dark .theme-btn {
-      background: white;
-      color: black;
-      border: 1px solid #ccc;
-    }
-  </style>
+.dark .theme-btn {
+  background: white;
+  color: black;
+}
+</style>
 </head>
 
 <body>
@@ -143,45 +133,39 @@
 
 <div class="container">
 
-  <div class="box">
-    <h3>Encrypt</h3>
-    <textarea id="encryptInput"></textarea>
-    <button onclick="copyText('encryptOutput', this)">Copy</button>
-    <div class="output" id="encryptOutput"></div>
-  </div>
+<div class="box">
+<h3>Encrypt</h3>
+<textarea id="encryptInput"></textarea>
+<button onclick="copyText('encryptOutput', this)">Copy</button>
+<div class="output" id="encryptOutput"></div>
+</div>
 
-  <div class="box">
-    <h3>Decrypt</h3>
-    <textarea id="decryptInput"></textarea>
-    <button onclick="copyText('decryptOutput', this)">Copy</button>
-    <div class="output" id="decryptOutput"></div>
-  </div>
+<div class="box">
+<h3>Decrypt</h3>
+<textarea id="decryptInput"></textarea>
+<button onclick="copyText('decryptOutput', this)">Copy</button>
+<div class="output" id="decryptOutput"></div>
+</div>
 
 </div>
 
+<!-- RULES -->
 <div class="rules">
+<h3>ZOR Rules</h3>
 
-  <h3>ZOR Language Rules</h3>
+<p><b>Special Words:</b> the→ZoR, and→NeX, is→VaC, are→SoL, you→KeM, to→RiN</p>
+<p><b>UlU Format:</b> Uppercase–lowercase–Uppercase</p>
 
-  <p>
-    <b>Special Words (UlU format):</b><br>
-    the → ZoR | and → NeX | is → VaC | are → SoL | you → KeM | to → RiN
-  </p>
+<h3>Letter Cipher</h3>
 
-  <p>
-    <b>UlU Format:</b> Uppercase–lowercase–Uppercase
-  </p>
-
-  <h3>Letter Cipher</h3>
-
-  <div class="table">
+<div class="table">
 Normal: A B C D E F G H I J K L M N O P Q R S T U V W X Y Z
 ZOR:    E P K T O V D M A Y C R N L U B W S H G I F Z J Q X
-  </div>
+</div>
 
 </div>
 
-<!-- BUTTON -->
+<!-- THEME BUTTON -->
 <button class="theme-btn" onclick="toggleTheme()" id="themeBtn">
 🌙 Dark Mode
 </button>
@@ -190,35 +174,111 @@ ZOR:    E P K T O V D M A Y C R N L U B W S H G I F Z J Q X
 
 let dark = false;
 
-function toggleTheme() {
-  dark = !dark;
-  document.body.classList.toggle("dark", dark);
+/* ENCRYPT */
+const special = {
+the:"ZoR", and:"NeX", is:"VaC", are:"SoL", you:"KeM", to:"RiN"
+};
 
-  const btn = document.getElementById("themeBtn");
+const cipher = {
+a:"e",b:"p",c:"k",d:"t",e:"o",f:"v",g:"d",h:"m",i:"a",j:"y",
+k:"c",l:"r",m:"n",n:"l",o:"u",p:"b",q:"w",r:"s",s:"h",
+t:"g",u:"i",v:"f",w:"z",x:"j",y:"q",z:"x"
+};
 
-  if (dark) {
-    btn.innerText = "☀️ Light Mode";
-  } else {
-    btn.innerText = "🌙 Dark Mode";
-  }
+let reverse = {};
+for(let k in cipher) reverse[cipher[k]] = k;
+
+/* ENCRYPT */
+function encrypt(){
+let text=document.getElementById("encryptInput").value;
+let words=text.trim().split(/\s+/);
+let out=[];
+let start=true;
+
+for(let w of words){
+if(!w) continue;
+
+let clean=w.toLowerCase().replace(/[^a-z]/g,"");
+
+if(special[clean]){
+out.push(special[clean]);
+start=false;
+continue;
 }
 
-// RESET
-function resetAll() {
-  document.getElementById("encryptInput").value = "";
-  document.getElementById("decryptInput").value = "";
-  document.getElementById("encryptOutput").innerText = "";
-  document.getElementById("decryptOutput").innerText = "";
+let e="";
+for(let c of w.toLowerCase()){
+e+=cipher[c]||c;
 }
 
-// COPY
-function copyText(id, btn) {
-  let text = document.getElementById(id).innerText;
-  navigator.clipboard.writeText(text);
+if(start){
+e=e[0].toUpperCase()+e.slice(1);
+start=false;
+}
 
-  let old = btn.innerText;
-  btn.innerText = "Copied!";
-  setTimeout(() => btn.innerText = old, 1000);
+if(/[.!?]$/.test(w)) start=true;
+
+out.push(e);
+}
+
+document.getElementById("encryptOutput").innerText=out.join(" ");
+}
+
+/* DECRYPT */
+function decrypt(){
+let text=document.getElementById("decryptInput").value;
+let words=text.trim().split(/\s+/);
+let out=[];
+
+for(let w of words){
+let found=false;
+
+for(let k in special){
+if(special[k]===w){
+out.push(k);
+found=true;
+break;
+}
+}
+
+if(found) continue;
+
+let d="";
+for(let c of w.toLowerCase()){
+d+=reverse[c]||c;
+}
+
+out.push(d);
+}
+
+document.getElementById("decryptOutput").innerText=out.join(" ");
+}
+
+/* LIVE */
+document.getElementById("encryptInput").addEventListener("input",encrypt);
+document.getElementById("decryptInput").addEventListener("input",decrypt);
+
+/* COPY */
+function copyText(id,btn){
+navigator.clipboard.writeText(document.getElementById(id).innerText);
+btn.innerText="Copied!";
+setTimeout(()=>btn.innerText="Copy",1000);
+}
+
+/* RESET */
+function resetAll(){
+document.getElementById("encryptInput").value="";
+document.getElementById("decryptInput").value="";
+document.getElementById("encryptOutput").innerText="";
+document.getElementById("decryptOutput").innerText="";
+}
+
+/* THEME */
+function toggleTheme(){
+dark=!dark;
+document.body.classList.toggle("dark",dark);
+document.getElementById("themeBtn").innerText=
+dark?"☀️ Light Mode":"🌙 Dark Mode";
 }
 
 </script>
