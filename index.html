@@ -17,13 +17,14 @@ h2 {
   text-align: center;
 }
 
-/* LAYOUT */
+/* RESET BUTTON AREA */
 .reset-container {
   display: flex;
   justify-content: center;
   margin: 10px 0 20px 0;
 }
 
+/* BOX LAYOUT */
 .container {
   display: flex;
   gap: 20px;
@@ -36,38 +37,21 @@ h2 {
 textarea {
   width: 100%;
   height: 120px;
-  font-size: 14px;
 }
 
 .output {
   margin-top: 10px;
-  white-space: pre-wrap;
   background: #f4f4f4;
   padding: 10px;
   min-height: 60px;
 }
 
+/* BUTTONS */
 button {
   cursor: pointer;
   padding: 6px 10px;
   border: 1px solid #ccc;
   background: white;
-}
-
-/* RULES */
-.rules {
-  margin-top: 25px;
-  padding: 15px;
-  background: #f9f9f9;
-  border: 1px solid #ddd;
-}
-
-.table {
-  font-family: monospace;
-  white-space: pre;
-  background: #fff;
-  padding: 10px;
-  border: 1px solid #ccc;
 }
 
 /* DARK MODE */
@@ -78,17 +62,6 @@ button {
 
 .dark .output {
   background: #1e1e1e;
-}
-
-.dark .rules {
-  background: #1a1a1a;
-  border-color: #333;
-}
-
-.dark .table {
-  background: #1a1a1a;
-  border-color: #333;
-  color: #eee;
 }
 
 .dark textarea {
@@ -102,13 +75,39 @@ button {
   border: 1px solid #444;
 }
 
+/* RULES */
+.rules {
+  margin-top: 25px;
+  padding: 15px;
+  background: #f9f9f9;
+  border: 1px solid #ddd;
+}
+
+.dark .rules {
+  background: #1a1a1a;
+  border-color: #333;
+}
+
+.table {
+  font-family: monospace;
+  white-space: pre;
+  background: #fff;
+  padding: 10px;
+  border: 1px solid #ccc;
+}
+
+.dark .table {
+  background: #1a1a1a;
+  color: #eee;
+  border-color: #333;
+}
+
 /* THEME BUTTON */
 .theme-btn {
   position: fixed;
   bottom: 20px;
   right: 20px;
   padding: 10px 14px;
-  border-radius: 6px;
 }
 
 body:not(.dark) .theme-btn {
@@ -127,6 +126,7 @@ body:not(.dark) .theme-btn {
 
 <h2>ZOR Cipher Website</h2>
 
+<!-- RESET BUTTON (RESTORED) -->
 <div class="reset-container">
   <button onclick="resetAll()">🔄 Reset</button>
 </div>
@@ -136,14 +136,14 @@ body:not(.dark) .theme-btn {
 <div class="box">
 <h3>Encrypt</h3>
 <textarea id="encryptInput"></textarea>
-<button onclick="copyText('encryptOutput', this)">Copy</button>
+<button onclick="copyText('encryptOutput',this)">Copy</button>
 <div class="output" id="encryptOutput"></div>
 </div>
 
 <div class="box">
 <h3>Decrypt</h3>
 <textarea id="decryptInput"></textarea>
-<button onclick="copyText('decryptOutput', this)">Copy</button>
+<button onclick="copyText('decryptOutput',this)">Copy</button>
 <div class="output" id="decryptOutput"></div>
 </div>
 
@@ -151,9 +151,21 @@ body:not(.dark) .theme-btn {
 
 <!-- RULES -->
 <div class="rules">
-<h3>ZOR Rules</h3>
 
-<p><b>Special Words:</b> the→ZoR, and→NeX, is→VaC, are→SoL, you→KeM, to→RiN</p>
+<h3>ZOR Language Rules</h3>
+
+<p><b>Special Word Translations:</b></p>
+
+<pre>
+the → ZoR
+and → NeX
+is  → VaC
+are → SoL
+you → KeM
+to  → RiN
+my  → JaK
+</pre>
+
 <p><b>UlU Format:</b> Uppercase–lowercase–Uppercase</p>
 
 <h3>Letter Cipher</h3>
@@ -166,27 +178,35 @@ ZOR:    E P K T O V D M A Y C R N L U B W S H G I F Z J Q X
 </div>
 
 <!-- THEME BUTTON -->
-<button class="theme-btn" onclick="toggleTheme()" id="themeBtn">
-🌙 Dark Mode
-</button>
+<button class="theme-btn" onclick="toggleTheme()" id="themeBtn">🌙 Dark Mode</button>
 
 <script>
 
 let dark = false;
 
-/* ENCRYPT */
+/* SPECIAL WORDS */
 const special = {
-the:"ZoR", and:"NeX", is:"VaC", are:"SoL", you:"KeM", to:"RiN"
+  the:"ZoR",
+  and:"NeX",
+  is:"VaC",
+  are:"SoL",
+  you:"KeM",
+  to:"RiN",
+  my:"JaK"
 };
 
+const reverseSpecial = {};
+for(let k in special) reverseSpecial[special[k]] = k;
+
+/* CIPHER */
 const cipher = {
 a:"e",b:"p",c:"k",d:"t",e:"o",f:"v",g:"d",h:"m",i:"a",j:"y",
 k:"c",l:"r",m:"n",n:"l",o:"u",p:"b",q:"w",r:"s",s:"h",
 t:"g",u:"i",v:"f",w:"z",x:"j",y:"q",z:"x"
 };
 
-let reverse = {};
-for(let k in cipher) reverse[cipher[k]] = k;
+let reverseCipher = {};
+for(let k in cipher) reverseCipher[cipher[k]] = k;
 
 /* ENCRYPT */
 function encrypt(){
@@ -202,23 +222,22 @@ let clean=w.toLowerCase().replace(/[^a-z]/g,"");
 
 if(special[clean]){
 out.push(special[clean]);
-start=false;
 continue;
 }
 
-let e="";
+let enc="";
 for(let c of w.toLowerCase()){
-e+=cipher[c]||c;
+enc+=cipher[c]||c;
 }
 
 if(start){
-e=e[0].toUpperCase()+e.slice(1);
+enc=enc[0].toUpperCase()+enc.slice(1);
 start=false;
 }
 
 if(/[.!?]$/.test(w)) start=true;
 
-out.push(e);
+out.push(enc);
 }
 
 document.getElementById("encryptOutput").innerText=out.join(" ");
@@ -231,24 +250,17 @@ let words=text.trim().split(/\s+/);
 let out=[];
 
 for(let w of words){
-let found=false;
-
-for(let k in special){
-if(special[k]===w){
-out.push(k);
-found=true;
-break;
-}
+if(reverseSpecial[w]){
+out.push(reverseSpecial[w]);
+continue;
 }
 
-if(found) continue;
-
-let d="";
+let dec="";
 for(let c of w.toLowerCase()){
-d+=reverse[c]||c;
+dec+=reverseCipher[c]||c;
 }
 
-out.push(d);
+out.push(dec);
 }
 
 document.getElementById("decryptOutput").innerText=out.join(" ");
