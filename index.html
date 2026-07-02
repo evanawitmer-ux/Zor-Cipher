@@ -2,12 +2,16 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>ZOR Cipher</title>
+  <title>ZOR Cipher App</title>
 
   <style>
     body {
       font-family: Arial;
       padding: 20px;
+    }
+
+    h2 {
+      margin-bottom: 10px;
     }
 
     .container {
@@ -22,6 +26,7 @@
     textarea {
       width: 100%;
       height: 120px;
+      font-size: 14px;
     }
 
     .output {
@@ -30,41 +35,93 @@
       background: #f4f4f4;
       padding: 10px;
       min-height: 60px;
+      font-size: 14px;
+    }
+
+    button {
+      margin-top: 5px;
+      margin-right: 5px;
+      cursor: pointer;
+    }
+
+    .label {
+      font-weight: bold;
+      margin-top: 10px;
+    }
+
+    .rules {
+      margin-top: 25px;
+      padding: 15px;
+      background: #f9f9f9;
+      border: 1px solid #ddd;
+    }
+
+    .table {
+      font-family: monospace;
+      white-space: pre;
+      background: #fff;
+      padding: 10px;
+      border: 1px solid #ccc;
+      margin-top: 10px;
+      overflow-x: auto;
+    }
+
+    .ulu {
+      font-size: 14px;
+      margin-top: 10px;
     }
   </style>
 </head>
 
 <body>
 
-<h2>ZOR Cipher</h2>
+<h2>ZOR Cipher App</h2>
 
 <div class="container">
 
-  <!-- LEFT: ENCRYPT -->
+  <!-- ENCRYPT -->
   <div class="box">
-    <h3>Encrypt</h3>
-    <textarea id="encryptInput"></textarea>
-    <br><br>
-    <button onclick="encrypt()">Encrypt</button>
+    <div class="label">Encrypt</div>
+    <textarea id="encryptInput" placeholder="Type normal text..."></textarea>
+    <button onclick="copyText('encryptOutput', this)">Copy</button>
     <div class="output" id="encryptOutput"></div>
   </div>
 
-  <!-- RIGHT: DECRYPT -->
+  <!-- DECRYPT -->
   <div class="box">
-    <h3>Decrypt</h3>
-    <textarea id="decryptInput"></textarea>
-    <br><br>
-    <button onclick="decrypt()">Decrypt</button>
+    <div class="label">Decrypt</div>
+    <textarea id="decryptInput" placeholder="Paste ZOR text..."></textarea>
+    <button onclick="copyText('decryptOutput', this)">Copy</button>
     <div class="output" id="decryptOutput"></div>
+  </div>
+
+</div>
+
+<!-- RULES -->
+<div class="rules">
+
+  <h3>ZOR Language Rules</h3>
+
+  <p>
+    <b>Special Words (UlU format only):</b><br>
+    the → ZoR | and → NeX | is → VaC | are → SoL | you → KeM | to → RiN
+  </p>
+
+  <div class="ulu">
+    <b>UlU Format:</b> Uppercase – lowercase – Uppercase (example: ZoR, VaC, KeM)
+  </div>
+
+  <h3>Letter Cipher Table</h3>
+
+  <div class="table">
+Normal: A B C D E F G H I J K L M N O P Q R S T U V W X Y Z
+ZOR:    E P K T O V D M A Y C R N L U B W S H G I F Z J Q X
   </div>
 
 </div>
 
 <script>
 
-// =====================
-// SPECIAL WORDS
-// =====================
 const special = {
   "the": "ZoR",
   "and": "NeX",
@@ -74,7 +131,6 @@ const special = {
   "to": "RiN"
 };
 
-// reverse special words
 const reverseSpecial = {
   "ZoR": "the",
   "NeX": "and",
@@ -84,27 +140,20 @@ const reverseSpecial = {
   "RiN": "to"
 };
 
-// =====================
-// LETTER CIPHER
-// =====================
 const cipher = {
   a:"e", b:"p", c:"k", d:"t", e:"o", f:"v", g:"d", h:"m", i:"a", j:"y",
   k:"c", l:"r", m:"n", n:"l", o:"u", p:"b", q:"w", r:"s", s:"h",
   t:"g", u:"i", v:"f", w:"z", x:"j", y:"q", z:"x"
 };
 
-// reverse letter cipher
 let reverseCipher = {};
-for (let key in cipher) {
-  reverseCipher[cipher[key]] = key;
+for (let k in cipher) {
+  reverseCipher[cipher[k]] = k;
 }
 
-// =====================
 // ENCRYPT
-// =====================
 function encryptWord(word) {
   let clean = word.toLowerCase().replace(/[^a-z]/g, "");
-
   if (special[clean]) return special[clean];
 
   let out = "";
@@ -127,9 +176,7 @@ function encrypt() {
     let clean = word.toLowerCase().replace(/[^a-z]/g, "");
     let enc = encryptWord(word);
 
-    let isSpecial = !!special[clean];
-
-    if (!isSpecial) {
+    if (!special[clean]) {
       if (sentenceStart) {
         enc = enc.charAt(0).toUpperCase() + enc.slice(1);
         sentenceStart = false;
@@ -146,9 +193,7 @@ function encrypt() {
   document.getElementById("encryptOutput").innerText = result.join(" ");
 }
 
-// =====================
-// DECRYPT (STRICT)
-// =====================
+// DECRYPT
 function decryptWord(word) {
   if (reverseSpecial[word]) return reverseSpecial[word];
 
@@ -166,28 +211,41 @@ function decrypt() {
 
   for (let word of words) {
     if (!word) continue;
-
     result.push(decryptWord(word));
   }
 
   document.getElementById("decryptOutput").innerText = result.join(" ");
 }
 
-// ENTER KEY SUPPORT (Encrypt + Decrypt)
+// LIVE UPDATE
+document.getElementById("encryptInput").addEventListener("input", encrypt);
+document.getElementById("decryptInput").addEventListener("input", decrypt);
 
-document.getElementById("encryptInput").addEventListener("keydown", function(event) {
-  if (event.key === "Enter" && !event.shiftKey) {
-    event.preventDefault();
+// ENTER KEY
+document.getElementById("encryptInput").addEventListener("keydown", function(e) {
+  if (e.key === "Enter" && !e.shiftKey) {
+    e.preventDefault();
     encrypt();
   }
 });
 
-document.getElementById("decryptInput").addEventListener("keydown", function(event) {
-  if (event.key === "Enter" && !event.shiftKey) {
-    event.preventDefault();
+document.getElementById("decryptInput").addEventListener("keydown", function(e) {
+  if (e.key === "Enter" && !e.shiftKey) {
+    e.preventDefault();
     decrypt();
   }
 });
+
+// COPY BUTTON
+function copyText(id, btn) {
+  let text = document.getElementById(id).innerText;
+
+  navigator.clipboard.writeText(text);
+
+  let old = btn.innerText;
+  btn.innerText = "Copied!";
+  setTimeout(() => btn.innerText = old, 1000);
+}
 
 </script>
 
