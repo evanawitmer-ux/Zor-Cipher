@@ -2,16 +2,26 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>ZOR Cipher</title>
+  <title>ZOR Cipher Website</title>
 
   <style>
     body {
       font-family: Arial;
       padding: 20px;
+      transition: 0.3s;
+      background: white;
+      color: black;
     }
 
     h2 {
+      text-align: center;
       margin-bottom: 10px;
+    }
+
+    .reset-container {
+      display: flex;
+      justify-content: center;
+      margin: 10px 0 20px 0;
     }
 
     .container {
@@ -39,14 +49,11 @@
     }
 
     button {
-      margin-top: 5px;
-      margin-right: 5px;
       cursor: pointer;
-    }
-
-    .label {
-      font-weight: bold;
-      margin-top: 10px;
+      padding: 6px 10px;
+      border: 1px solid #ccc;
+      background: white;
+      transition: 0.3s;
     }
 
     .rules {
@@ -62,56 +69,110 @@
       background: #fff;
       padding: 10px;
       border: 1px solid #ccc;
-      margin-top: 10px;
       overflow-x: auto;
     }
 
-    .ulu {
-      font-size: 14px;
-      margin-top: 10px;
+    /* DARK MODE */
+    .dark {
+      background: #121212;
+      color: #eee;
+    }
+
+    .dark .output {
+      background: #1e1e1e;
+    }
+
+    .dark .rules {
+      background: #1a1a1a;
+      border-color: #333;
+    }
+
+    .dark .table {
+      background: #1a1a1a;
+      border-color: #333;
+      color: #eee;
+    }
+
+    .dark textarea {
+      background: #1e1e1e;
+      color: #eee;
+      border: 1px solid #444;
+    }
+
+    .dark button {
+      background: #1e1e1e;
+      color: #eee;
+      border: 1px solid #444;
+    }
+
+    /* 🌗 THEME BUTTON = ALWAYS OPPOSITE OF PAGE */
+    .theme-btn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      padding: 10px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: 0.3s;
+      border: 1px solid #ccc;
+    }
+
+    /* Light page → dark button */
+    body:not(.dark) .theme-btn {
+      background: #111;
+      color: white;
+      border: none;
+    }
+
+    /* Dark page → light button */
+    .dark .theme-btn {
+      background: white;
+      color: black;
+      border: 1px solid #ccc;
     }
   </style>
 </head>
 
 <body>
 
-<h2>ZOR Cipher App</h2>
+<h2>ZOR Cipher Website</h2>
+
+<div class="reset-container">
+  <button onclick="resetAll()">🔄 Reset</button>
+</div>
 
 <div class="container">
 
-  <!-- ENCRYPT -->
   <div class="box">
-    <div class="label">Encrypt</div>
-    <textarea id="encryptInput" placeholder="Type normal text..."></textarea>
+    <h3>Encrypt</h3>
+    <textarea id="encryptInput"></textarea>
     <button onclick="copyText('encryptOutput', this)">Copy</button>
     <div class="output" id="encryptOutput"></div>
   </div>
 
-  <!-- DECRYPT -->
   <div class="box">
-    <div class="label">Decrypt</div>
-    <textarea id="decryptInput" placeholder="Paste ZOR text..."></textarea>
+    <h3>Decrypt</h3>
+    <textarea id="decryptInput"></textarea>
     <button onclick="copyText('decryptOutput', this)">Copy</button>
     <div class="output" id="decryptOutput"></div>
   </div>
 
 </div>
 
-<!-- RULES -->
 <div class="rules">
 
   <h3>ZOR Language Rules</h3>
 
   <p>
-    <b>Special Words (UlU format only):</b><br>
+    <b>Special Words (UlU format):</b><br>
     the → ZoR | and → NeX | is → VaC | are → SoL | you → KeM | to → RiN
   </p>
 
-  <div class="ulu">
-    <b>UlU Format:</b> Uppercase – lowercase – Uppercase (example: ZoR, VaC, KeM)
-  </div>
+  <p>
+    <b>UlU Format:</b> Uppercase–lowercase–Uppercase
+  </p>
 
-  <h3>Letter Cipher Table</h3>
+  <h3>Letter Cipher</h3>
 
   <div class="table">
 Normal: A B C D E F G H I J K L M N O P Q R S T U V W X Y Z
@@ -120,126 +181,39 @@ ZOR:    E P K T O V D M A Y C R N L U B W S H G I F Z J Q X
 
 </div>
 
+<!-- BUTTON -->
+<button class="theme-btn" onclick="toggleTheme()" id="themeBtn">
+🌙 Dark Mode
+</button>
+
 <script>
 
-const special = {
-  "the": "ZoR",
-  "and": "NeX",
-  "is": "VaC",
-  "are": "SoL",
-  "you": "KeM",
-  "to": "RiN"
-};
+let dark = false;
 
-const reverseSpecial = {
-  "ZoR": "the",
-  "NeX": "and",
-  "VaC": "is",
-  "SoL": "are",
-  "KeM": "you",
-  "RiN": "to"
-};
+function toggleTheme() {
+  dark = !dark;
+  document.body.classList.toggle("dark", dark);
 
-const cipher = {
-  a:"e", b:"p", c:"k", d:"t", e:"o", f:"v", g:"d", h:"m", i:"a", j:"y",
-  k:"c", l:"r", m:"n", n:"l", o:"u", p:"b", q:"w", r:"s", s:"h",
-  t:"g", u:"i", v:"f", w:"z", x:"j", y:"q", z:"x"
-};
+  const btn = document.getElementById("themeBtn");
 
-let reverseCipher = {};
-for (let k in cipher) {
-  reverseCipher[cipher[k]] = k;
+  if (dark) {
+    btn.innerText = "☀️ Light Mode";
+  } else {
+    btn.innerText = "🌙 Dark Mode";
+  }
 }
 
-// ENCRYPT
-function encryptWord(word) {
-  let clean = word.toLowerCase().replace(/[^a-z]/g, "");
-  if (special[clean]) return special[clean];
-
-  let out = "";
-  for (let c of word.toLowerCase()) {
-    out += cipher[c] || c;
-  }
-  return out;
+// RESET
+function resetAll() {
+  document.getElementById("encryptInput").value = "";
+  document.getElementById("decryptInput").value = "";
+  document.getElementById("encryptOutput").innerText = "";
+  document.getElementById("decryptOutput").innerText = "";
 }
 
-function encrypt() {
-  let text = document.getElementById("encryptInput").value;
-  let words = text.trim().split(/\s+/);
-  let result = [];
-
-  let sentenceStart = true;
-
-  for (let word of words) {
-    if (!word) continue;
-
-    let clean = word.toLowerCase().replace(/[^a-z]/g, "");
-    let enc = encryptWord(word);
-
-    if (!special[clean]) {
-      if (sentenceStart) {
-        enc = enc.charAt(0).toUpperCase() + enc.slice(1);
-        sentenceStart = false;
-      }
-
-      if (/[.!?]$/.test(word)) {
-        sentenceStart = true;
-      }
-    }
-
-    result.push(enc);
-  }
-
-  document.getElementById("encryptOutput").innerText = result.join(" ");
-}
-
-// DECRYPT
-function decryptWord(word) {
-  if (reverseSpecial[word]) return reverseSpecial[word];
-
-  let out = "";
-  for (let c of word.toLowerCase()) {
-    out += reverseCipher[c] || c;
-  }
-  return out;
-}
-
-function decrypt() {
-  let text = document.getElementById("decryptInput").value;
-  let words = text.trim().split(/\s+/);
-  let result = [];
-
-  for (let word of words) {
-    if (!word) continue;
-    result.push(decryptWord(word));
-  }
-
-  document.getElementById("decryptOutput").innerText = result.join(" ");
-}
-
-// LIVE UPDATE
-document.getElementById("encryptInput").addEventListener("input", encrypt);
-document.getElementById("decryptInput").addEventListener("input", decrypt);
-
-// ENTER KEY
-document.getElementById("encryptInput").addEventListener("keydown", function(e) {
-  if (e.key === "Enter" && !e.shiftKey) {
-    e.preventDefault();
-    encrypt();
-  }
-});
-
-document.getElementById("decryptInput").addEventListener("keydown", function(e) {
-  if (e.key === "Enter" && !e.shiftKey) {
-    e.preventDefault();
-    decrypt();
-  }
-});
-
-// COPY BUTTON
+// COPY
 function copyText(id, btn) {
   let text = document.getElementById(id).innerText;
-
   navigator.clipboard.writeText(text);
 
   let old = btn.innerText;
