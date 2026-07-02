@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>ZOR Cipher Generator</title>
+</head>
+<body style="font-family: Arial; padding: 20px;">
+
+<h2>ZOR Cipher Generator</h2>
+
+<textarea id="input" rows="6" cols="60" placeholder="Type your message..."></textarea>
+<br><br>
+
+<button onclick="encrypt()">Encrypt</button>
+
+<h3>Output:</h3>
+<div id="output" style="white-space: pre-wrap;"></div>
+
+<script>
+
+// =====================
+// SPECIAL WORDS (ignored for sentence logic)
+// =====================
+const special = {
+  "the": "ZoR",
+  "and": "NeX",
+  "is": "VaC",
+  "are": "SoL",
+  "you": "KeM",
+  "to": "RiN"
+};
+
+// =====================
+// LETTER CIPHER
+// =====================
+const cipher = {
+  a:"e", b:"p", c:"k", d:"t", e:"o", f:"v", g:"d", h:"m", i:"a", j:"y",
+  k:"c", l:"r", m:"n", n:"l", o:"u", p:"b", q:"w", r:"s", s:"h",
+  t:"g", u:"i", v:"f", w:"z", x:"j", y:"q", z:"x"
+};
+
+function encryptWord(word) {
+  let clean = word.toLowerCase().replace(/[^a-z]/g, "");
+
+  if (special[clean]) return special[clean];
+
+  let lower = word.toLowerCase();
+  let out = "";
+
+  for (let c of lower) {
+    out += cipher[c] || c;
+  }
+
+  return out;
+}
+
+function encrypt() {
+  let text = document.getElementById("input").value;
+
+  let words = text.trim().split(/\s+/);
+  let result = [];
+
+  let sentenceStart = true;
+
+  for (let word of words) {
+    if (!word) continue;
+
+    let clean = word.toLowerCase().replace(/[^a-z]/g, "");
+    let enc = encryptWord(word);
+
+    let isSpecial = !!special[clean];
+
+    // =========================
+    // MODEL 1 RULE:
+    // ONLY NORMAL WORDS affect sentence logic
+    // =========================
+    if (!isSpecial) {
+
+      if (sentenceStart) {
+        enc = enc.charAt(0).toUpperCase() + enc.slice(1);
+        sentenceStart = false;
+      }
+
+      // sentence ends ONLY from normal words
+      if (/[.!?]$/.test(word)) {
+        sentenceStart = true;
+      }
+
+    }
+
+    result.push(enc);
+  }
+
+  document.getElementById("output").innerText = result.join(" ");
+}
+
+// ENTER KEY SUPPORT
+document.getElementById("input").addEventListener("keydown", function(event) {
+  if (event.key === "Enter" && !event.shiftKey) {
+    event.preventDefault();
+    encrypt();
+  }
+});
+
+</script>
+
+</body>
+</html>
