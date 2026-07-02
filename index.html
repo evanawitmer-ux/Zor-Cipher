@@ -2,24 +2,68 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>ZOR Cipher Generator</title>
+  <title>ZOR Cipher</title>
+
+  <style>
+    body {
+      font-family: Arial;
+      padding: 20px;
+    }
+
+    .container {
+      display: flex;
+      gap: 20px;
+    }
+
+    .box {
+      width: 50%;
+    }
+
+    textarea {
+      width: 100%;
+      height: 120px;
+    }
+
+    .output {
+      margin-top: 10px;
+      white-space: pre-wrap;
+      background: #f4f4f4;
+      padding: 10px;
+      min-height: 60px;
+    }
+  </style>
 </head>
-<body style="font-family: Arial; padding: 20px;">
 
-<h2>ZOR Cipher Generator</h2>
+<body>
 
-<textarea id="input" rows="6" cols="60" placeholder="Type your message..."></textarea>
-<br><br>
+<h2>ZOR Cipher (Encrypt + Decrypt)</h2>
 
-<button onclick="encrypt()">Encrypt</button>
+<div class="container">
 
-<h3>Output:</h3>
-<div id="output" style="white-space: pre-wrap;"></div>
+  <!-- LEFT: ENCRYPT -->
+  <div class="box">
+    <h3>Encrypt</h3>
+    <textarea id="encryptInput"></textarea>
+    <br><br>
+    <button onclick="encrypt()">Encrypt</button>
+    <div class="output" id="encryptOutput"></div>
+  </div>
+
+  <!-- RIGHT: DECRYPT -->
+  <div class="box">
+    <h3>Decrypt</h3>
+    <textarea id="decryptInput"></textarea>
+    <br><br>
+    <button onclick="decrypt()">Decrypt</button>
+    <div class="output" id="decryptOutput"></div>
+  </div>
+
+</div>
 
 <script>
 
 // =====================
-// SPECIAL WORDS (ignored for sentence logic)
+// SPECIAL WORDS
 // =====================
 const special = {
   "the": "ZoR",
@@ -28,6 +72,16 @@ const special = {
   "are": "SoL",
   "you": "KeM",
   "to": "RiN"
+};
+
+// reverse special words
+const reverseSpecial = {
+  "ZoR": "the",
+  "NeX": "and",
+  "VaC": "is",
+  "SoL": "are",
+  "KeM": "you",
+  "RiN": "to"
 };
 
 // =====================
@@ -39,24 +93,29 @@ const cipher = {
   t:"g", u:"i", v:"f", w:"z", x:"j", y:"q", z:"x"
 };
 
+// reverse letter cipher
+let reverseCipher = {};
+for (let key in cipher) {
+  reverseCipher[cipher[key]] = key;
+}
+
+// =====================
+// ENCRYPT
+// =====================
 function encryptWord(word) {
   let clean = word.toLowerCase().replace(/[^a-z]/g, "");
 
   if (special[clean]) return special[clean];
 
-  let lower = word.toLowerCase();
   let out = "";
-
-  for (let c of lower) {
+  for (let c of word.toLowerCase()) {
     out += cipher[c] || c;
   }
-
   return out;
 }
 
 function encrypt() {
-  let text = document.getElementById("input").value;
-
+  let text = document.getElementById("encryptInput").value;
   let words = text.trim().split(/\s+/);
   let result = [];
 
@@ -70,35 +129,63 @@ function encrypt() {
 
     let isSpecial = !!special[clean];
 
-    // =========================
-    // MODEL 1 RULE:
-    // ONLY NORMAL WORDS affect sentence logic
-    // =========================
     if (!isSpecial) {
-
       if (sentenceStart) {
         enc = enc.charAt(0).toUpperCase() + enc.slice(1);
         sentenceStart = false;
       }
 
-      // sentence ends ONLY from normal words
       if (/[.!?]$/.test(word)) {
         sentenceStart = true;
       }
-
     }
 
     result.push(enc);
   }
 
-  document.getElementById("output").innerText = result.join(" ");
+  document.getElementById("encryptOutput").innerText = result.join(" ");
 }
 
-// ENTER KEY SUPPORT
-document.getElementById("input").addEventListener("keydown", function(event) {
+// =====================
+// DECRYPT (STRICT)
+// =====================
+function decryptWord(word) {
+  if (reverseSpecial[word]) return reverseSpecial[word];
+
+  let out = "";
+  for (let c of word.toLowerCase()) {
+    out += reverseCipher[c] || c;
+  }
+  return out;
+}
+
+function decrypt() {
+  let text = document.getElementById("decryptInput").value;
+  let words = text.trim().split(/\s+/);
+  let result = [];
+
+  for (let word of words) {
+    if (!word) continue;
+
+    result.push(decryptWord(word));
+  }
+
+  document.getElementById("decryptOutput").innerText = result.join(" ");
+}
+
+// ENTER KEY SUPPORT (Encrypt + Decrypt)
+
+document.getElementById("encryptInput").addEventListener("keydown", function(event) {
   if (event.key === "Enter" && !event.shiftKey) {
     event.preventDefault();
     encrypt();
+  }
+});
+
+document.getElementById("decryptInput").addEventListener("keydown", function(event) {
+  if (event.key === "Enter" && !event.shiftKey) {
+    event.preventDefault();
+    decrypt();
   }
 });
 
