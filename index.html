@@ -17,14 +17,12 @@ h2 {
   text-align: center;
 }
 
-/* RESET BUTTON AREA */
 .reset-container {
   display: flex;
   justify-content: center;
   margin: 10px 0 20px 0;
 }
 
-/* BOX LAYOUT */
 .container {
   display: flex;
   gap: 20px;
@@ -46,7 +44,6 @@ textarea {
   min-height: 60px;
 }
 
-/* BUTTONS */
 button {
   cursor: pointer;
   padding: 6px 10px;
@@ -126,7 +123,6 @@ body:not(.dark) .theme-btn {
 
 <h2>ZOR Cipher Website</h2>
 
-<!-- RESET BUTTON (RESTORED) -->
 <div class="reset-container">
   <button onclick="resetAll()">🔄 Reset</button>
 </div>
@@ -172,12 +168,11 @@ my  → JaK
 
 <div class="table">
 Normal: A B C D E F G H I J K L M N O P Q R S T U V W X Y Z
-ZOR:    E P K T O V D M A Y C R N L U B W S H G I F Z J Q X
+ZOR:    E P K T O V D M A Q C R N L U B W S H G Y F Z J I X
 </div>
 
 </div>
 
-<!-- THEME BUTTON -->
 <button class="theme-btn" onclick="toggleTheme()" id="themeBtn">🌙 Dark Mode</button>
 
 <script>
@@ -196,124 +191,101 @@ const special = {
 };
 
 const reverseSpecial = {};
-for(let k in special) reverseSpecial[special[k]] = k;
+for (let k in special) reverseSpecial[special[k]] = k;
 
-/* CIPHER */
+/* CIPHER (Y AS VOWEL) */
 const cipher = {
-  a:"e",
-  b:"p",
-  c:"k",
-  d:"t",
-  e:"o",
-  f:"v",
-  g:"d",
-  h:"m",
-  i:"a",
-  j:"q",
-  k:"c",
-  l:"r",
-  m:"n",
-  n:"l",
-  o:"u",
-  p:"b",
-  q:"w",
-  r:"s",
-  s:"h",
-  t:"g",
-  u:"y",
-  v:"f",
-  w:"z",
-  x:"j",
-  y:"i",
-  z:"x"
+a:"e", b:"p", c:"k", d:"t", e:"o", f:"v", g:"d", h:"m", i:"a", j:"q",
+k:"c", l:"r", m:"n", n:"l", o:"u", p:"b", q:"w", r:"s", s:"h",
+t:"g", u:"y", v:"f", w:"z", x:"j", y:"i", z:"x"
 };
 
-let reverseCipher = {};
-for(let k in cipher) reverseCipher[cipher[k]] = k;
+const reverseCipher = {};
+for (let k in cipher) reverseCipher[cipher[k]] = k;
 
 /* ENCRYPT */
-function encrypt(){
-let text=document.getElementById("encryptInput").value;
-let words=text.trim().split(/\s+/);
-let out=[];
-let start=true;
+function encrypt() {
+  let text = document.getElementById("encryptInput").value;
+  let words = text.trim().split(/\s+/);
+  let out = [];
+  let start = true;
 
-for(let w of words){
-if(!w) continue;
+  for (let w of words) {
+    if (!w) continue;
 
-let clean=w.toLowerCase().replace(/[^a-z]/g,"");
+    let clean = w.toLowerCase().replace(/[^a-z]/g,"");
 
-if(special[clean]){
-out.push(special[clean]);
-continue;
-}
+    if (special[clean]) {
+      out.push(special[clean]);
+      continue;
+    }
 
-let enc="";
-for(let c of w.toLowerCase()){
-enc+=cipher[c]||c;
-}
+    let enc = "";
+    for (let c of w.toLowerCase()) {
+      enc += cipher[c] || c;
+    }
 
-if(start){
-enc=enc[0].toUpperCase()+enc.slice(1);
-start=false;
-}
+    if (start) {
+      enc = enc.charAt(0).toUpperCase() + enc.slice(1);
+      start = false;
+    }
 
-if(/[.!?]$/.test(w)) start=true;
+    if (/[.!?]$/.test(w)) start = true;
 
-out.push(enc);
-}
+    out.push(enc);
+  }
 
-document.getElementById("encryptOutput").innerText=out.join(" ");
+  document.getElementById("encryptOutput").innerText = out.join(" ");
 }
 
 /* DECRYPT */
-function decrypt(){
-let text=document.getElementById("decryptInput").value;
-let words=text.trim().split(/\s+/);
-let out=[];
+function decrypt() {
+  let text = document.getElementById("decryptInput").value;
+  let words = text.trim().split(/\s+/);
+  let out = [];
 
-for(let w of words){
-if(reverseSpecial[w]){
-out.push(reverseSpecial[w]);
-continue;
-}
+  for (let w of words) {
+    if (reverseSpecial[w]) {
+      out.push(reverseSpecial[w]);
+      continue;
+    }
 
-let dec="";
-for(let c of w.toLowerCase()){
-dec+=reverseCipher[c]||c;
-}
+    let dec = "";
+    for (let c of w.toLowerCase()) {
+      dec += reverseCipher[c] || c;
+    }
 
-out.push(dec);
-}
+    out.push(dec);
+  }
 
-document.getElementById("decryptOutput").innerText=out.join(" ");
+  document.getElementById("decryptOutput").innerText = out.join(" ");
 }
 
 /* LIVE */
-document.getElementById("encryptInput").addEventListener("input",encrypt);
-document.getElementById("decryptInput").addEventListener("input",decrypt);
+document.getElementById("encryptInput").addEventListener("input", encrypt);
+document.getElementById("decryptInput").addEventListener("input", decrypt);
 
 /* COPY */
-function copyText(id,btn){
-navigator.clipboard.writeText(document.getElementById(id).innerText);
-btn.innerText="Copied!";
-setTimeout(()=>btn.innerText="Copy",1000);
+function copyText(id, btn) {
+  navigator.clipboard.writeText(document.getElementById(id).innerText);
+  btn.innerText = "Copied!";
+  setTimeout(() => btn.innerText = "Copy", 1000);
 }
 
 /* RESET */
-function resetAll(){
-document.getElementById("encryptInput").value="";
-document.getElementById("decryptInput").value="";
-document.getElementById("encryptOutput").innerText="";
-document.getElementById("decryptOutput").innerText="";
+function resetAll() {
+  document.getElementById("encryptInput").value = "";
+  document.getElementById("decryptInput").value = "";
+  document.getElementById("encryptOutput").innerText = "";
+  document.getElementById("decryptOutput").innerText = "";
 }
 
 /* THEME */
-function toggleTheme(){
-dark=!dark;
-document.body.classList.toggle("dark",dark);
-document.getElementById("themeBtn").innerText=
-dark?"☀️ Light Mode":"🌙 Dark Mode";
+function toggleTheme() {
+  dark = !dark;
+  document.body.classList.toggle("dark", dark);
+  document.getElementById("themeBtn").innerText =
+    dark ? "☀️ Light Mode" : "🌙 Dark Mode";
 }
 
 </script>
