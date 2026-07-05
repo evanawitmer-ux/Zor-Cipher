@@ -1,158 +1,26 @@
 <!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<title>ZOR Cipher Website</title>
-
+<html><head><meta charset="UTF-8"><title>ZOR Cipher Website</title>
 <style>
-body {
-  font-family: Arial;
-  padding: 20px;
-  transition: 0.3s;
-  background: white;
-  color: black;
-}
-
-h2 {
-  text-align: center;
-}
-
-.reset-container {
-  display: flex;
-  justify-content: center;
-  margin: 10px 0 20px 0;
-}
-
-.container {
-  display: flex;
-  gap: 20px;
-}
-
-.box {
-  width: 50%;
-}
-
-textarea {
-  width: 100%;
-  height: 120px;
-}
-
-.output {
-  margin-top: 10px;
-  background: #f4f4f4;
-  padding: 10px;
-  min-height: 60px;
-}
-
-button {
-  cursor: pointer;
-  padding: 6px 10px;
-  border: 1px solid #ccc;
-  background: white;
-}
-
-/* DARK MODE */
-.dark {
-  background: #121212;
-  color: #eee;
-}
-
-.dark .output {
-  background: #1e1e1e;
-}
-
-.dark textarea {
-  background: #1e1e1e;
-  color: #eee;
-}
-
-.dark button {
-  background: #1e1e1e;
-  color: #eee;
-  border: 1px solid #444;
-}
-
-/* RULES */
-.rules {
-  margin-top: 25px;
-  padding: 15px;
-  background: #f9f9f9;
-  border: 1px solid #ddd;
-}
-
-.dark .rules {
-  background: #1a1a1a;
-  border-color: #333;
-}
-
-.table {
-  font-family: monospace;
-  white-space: pre;
-  background: #fff;
-  padding: 10px;
-  border: 1px solid #ccc;
-}
-
-.dark .table {
-  background: #1a1a1a;
-  color: #eee;
-  border-color: #333;
-}
-
-/* THEME BUTTON */
-.theme-btn {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  padding: 10px 14px;
-}
-
-body:not(.dark) .theme-btn {
-  background: black;
-  color: white;
-}
-
-.dark .theme-btn {
-  background: white;
-  color: black;
-}
-</style>
-</head>
-
-<body>
-
+body{font-family:Arial;padding:20px;transition:.3s;background:#fff;color:#000}
+h2{text-align:center}.reset-container{display:flex;justify-content:center;margin:10px 0 20px}
+.container{display:flex;gap:20px}.box{width:50%}textarea{width:100%;height:120px}
+.output{margin-top:10px;background:#f4f4f4;padding:10px;min-height:60px}
+button{cursor:pointer;padding:6px 10px;border:1px solid #ccc;background:#fff}
+.dark{background:#121212;color:#eee}.dark .output,.dark textarea{background:#1e1e1e;color:#eee}
+.dark button{background:#1e1e1e;color:#eee;border:1px solid #444}
+.rules{margin-top:25px;padding:15px;background:#f9f9f9;border:1px solid #ddd}
+.dark .rules,.dark .table{background:#1a1a1a;color:#eee;border-color:#333}
+.table{font-family:monospace;white-space:pre;background:#fff;padding:10px;border:1px solid #ccc}
+.theme-btn{position:fixed;bottom:20px;right:20px;padding:10px 14px}
+body:not(.dark) .theme-btn{background:#000;color:#fff}.dark .theme-btn{background:#fff;color:#000}
+</style></head><body>
 <h2>ZOR Cipher Website</h2>
-
-<div class="reset-container">
-  <button onclick="resetAll()">🔄 Reset</button>
-</div>
-
+<div class="reset-container"><button onclick="resetAll()">🔄 Reset</button></div>
 <div class="container">
-
-<div class="box">
-<h3>Encrypt</h3>
-<textarea id="encryptInput"></textarea>
-<button onclick="copyText('encryptOutput',this)">Copy</button>
-<div class="output" id="encryptOutput"></div>
+<div class="box"><h3>Encrypt</h3><textarea id="encryptInput"></textarea><button onclick="copyText('encryptOutput',this)">Copy</button><div class="output" id="encryptOutput"></div></div>
+<div class="box"><h3>Decrypt</h3><textarea id="decryptInput"></textarea><button onclick="copyText('decryptOutput',this)">Copy</button><div class="output" id="decryptOutput"></div></div>
 </div>
-
-<div class="box">
-<h3>Decrypt</h3>
-<textarea id="decryptInput"></textarea>
-<button onclick="copyText('decryptOutput',this)">Copy</button>
-<div class="output" id="decryptOutput"></div>
-</div>
-
-</div>
-
-<!-- RULES -->
-<div class="rules">
-
-<h3>ZOR Language Rules</h3>
-
-<p><b>Special Word Translations:</b></p>
-
-<pre>
+<div class="rules"><h3>ZOR Language Rules</h3><p><b>Special Word Translations:</b></p><pre>
 the → ZoR
 and → NeX
 is  → VaC
@@ -160,135 +28,22 @@ are → SoL
 you → KeM
 to  → RiN
 my  → JaK
-</pre>
-
-<p><b>UlU Format:</b> Uppercase–lowercase–Uppercase</p>
-
-<h3>Letter Cipher</h3>
-
-<div class="table">
-Normal: A B C D E F G H I J K L M N O P Q R S T U V W X Y Z
-ZOR:    E P K T O V D M A Q C R N L U B W S H G Y F Z J I X
-</div>
-
-</div>
-
+</pre><p><b>UlU Format:</b> Uppercase–lowercase–Uppercase</p>
+<div class="table">Normal: A B C D E F G H I J K L M N O P Q R S T U V W X Y Z
+ZOR:    E P K T O V D M A Q C R N L U B W S H G Y F Z J I X</div></div>
 <button class="theme-btn" onclick="toggleTheme()" id="themeBtn">🌙 Dark Mode</button>
-
 <script>
-
-let dark = false;
-
-/* SPECIAL WORDS */
-const special = {
-  the:"ZoR",
-  and:"NeX",
-  is:"VaC",
-  are:"SoL",
-  you:"KeM",
-  to:"RiN",
-  my:"JaK"
-};
-
-const reverseSpecial = {};
-for (let k in special) reverseSpecial[special[k]] = k;
-
-/* CIPHER (Y AS VOWEL) */
-const cipher = {
-a:"e", b:"p", c:"k", d:"t", e:"o", f:"v", g:"d", h:"m", i:"a", j:"q",
-k:"c", l:"r", m:"n", n:"l", o:"u", p:"b", q:"w", r:"s", s:"h",
-t:"g", u:"y", v:"f", w:"z", x:"j", y:"i", z:"x"
-};
-
-const reverseCipher = {};
-for (let k in cipher) reverseCipher[cipher[k]] = k;
-
-/* ENCRYPT */
-function encrypt() {
-  let text = document.getElementById("encryptInput").value;
-  let words = text.trim().split(/\s+/);
-  let out = [];
-  let start = true;
-
-  for (let w of words) {
-    if (!w) continue;
-
-    let clean = w.toLowerCase().replace(/[^a-z]/g,"");
-
-    if (special[clean]) {
-      out.push(special[clean]);
-      continue;
-    }
-
-    let enc = "";
-    for (let c of w.toLowerCase()) {
-      enc += cipher[c] || c;
-    }
-
-    if (start) {
-      enc = enc.charAt(0).toUpperCase() + enc.slice(1);
-      start = false;
-    }
-
-    if (/[.!?]$/.test(w)) start = true;
-
-    out.push(enc);
-  }
-
-  document.getElementById("encryptOutput").innerText = out.join(" ");
-}
-
-/* DECRYPT */
-function decrypt() {
-  let text = document.getElementById("decryptInput").value;
-  let words = text.trim().split(/\s+/);
-  let out = [];
-
-  for (let w of words) {
-    if (reverseSpecial[w]) {
-      out.push(reverseSpecial[w]);
-      continue;
-    }
-
-    let dec = "";
-    for (let c of w.toLowerCase()) {
-      dec += reverseCipher[c] || c;
-    }
-
-    out.push(dec);
-  }
-
-  document.getElementById("decryptOutput").innerText = out.join(" ");
-}
-
-/* LIVE */
-document.getElementById("encryptInput").addEventListener("input", encrypt);
-document.getElementById("decryptInput").addEventListener("input", decrypt);
-
-/* COPY */
-function copyText(id, btn) {
-  navigator.clipboard.writeText(document.getElementById(id).innerText);
-  btn.innerText = "Copied!";
-  setTimeout(() => btn.innerText = "Copy", 1000);
-}
-
-/* RESET */
-function resetAll() {
-  document.getElementById("encryptInput").value = "";
-  document.getElementById("decryptInput").value = "";
-  document.getElementById("encryptOutput").innerText = "";
-  document.getElementById("decryptOutput").innerText = "";
-}
-
-/* THEME */
-function toggleTheme() {
-  dark = !dark;
-  document.body.classList.toggle("dark", dark);
-  document.getElementById("themeBtn").innerText =
-    dark ? "☀️ Light Mode" : "🌙 Dark Mode";
-}
-
-</script>
-
-</body>
-</html>
+let dark=false;
+const special={the:"ZoR",and:"NeX",is:"VaC",are:"SoL",you:"KeM",to:"RiN",my:"JaK"};
+const reverseSpecial={};for(const k in special)reverseSpecial[special[k]]=k;
+const cipher={a:"e",b:"p",c:"k",d:"t",e:"o",f:"v",g:"d",h:"m",i:"a",j:"q",k:"c",l:"r",m:"n",n:"l",o:"u",p:"b",q:"w",r:"s",s:"h",t:"g",u:"y",v:"f",w:"z",x:"j",y:"i",z:"x"};
+const reverseCipher={};for(const k in cipher)reverseCipher[cipher[k]]=k;
+function applyCase(src,out){let r="";for(let i=0;i<out.length;i++){let s=src[i]||src[src.length-1]||"";r+=s>='A'&&s<='Z'?out[i].toUpperCase():out[i].toLowerCase();}return r;}
+function splitWord(w){const m=w.match(/^([^A-Za-z]*)([A-Za-z]+)([^A-Za-z]*)$/);return m?{pre:m[1],core:m[2],post:m[3]}:{pre:"",core:w,post:""};}
+function encrypt(){let out=[];let start=true;for(const raw of encryptInput.value.split(/\s+/)){if(!raw)continue;let {pre,core,post}=splitWord(raw);let clean=core.toLowerCase();if(special[clean]){out.push(pre+special[clean]+post);}else{let enc="";for(const c of clean)enc+=cipher[c]||c;enc=applyCase(core,enc);if(start&&core===core.toLowerCase())enc=enc.charAt(0).toUpperCase()+enc.slice(1);out.push(pre+enc+post);}start=/[.!?]$/.test(post);}encryptOutput.innerText=out.join(" ");}
+function decrypt(){let out=[];for(const raw of decryptInput.value.split(/\s+/)){if(!raw)continue;let {pre,core,post}=splitWord(raw);if(reverseSpecial[core]){out.push(pre+reverseSpecial[core]+post);}else{let dec="";for(const c of core.toLowerCase())dec+=reverseCipher[c]||c;dec=applyCase(core,dec);out.push(pre+dec+post);}}decryptOutput.innerText=out.join(" ");}
+encryptInput.addEventListener("input",encrypt);decryptInput.addEventListener("input",decrypt);
+function copyText(id,b){navigator.clipboard.writeText(document.getElementById(id).innerText);b.innerText="Copied!";setTimeout(()=>b.innerText="Copy",1000);}
+function resetAll(){encryptInput.value="";decryptInput.value="";encryptOutput.innerText="";decryptOutput.innerText="";}
+function toggleTheme(){dark=!dark;document.body.classList.toggle("dark",dark);themeBtn.innerText=dark?"☀️ Light Mode":"🌙 Dark Mode";}
+</script></body></html>
